@@ -67,7 +67,7 @@ def verify_env_variables(mode) -> dict | None:
             print(
                 "Error, valid player count threshold was not provided. Please provide one in the variable \"PLAYER_COUNT_THRESHOLD\", in the Lambda's environment variables, with a number between 0 and 100 (0 means disabled)")
             return generate_return_message(FAILURE_STATUS_CODE, "Missing player count threshold")
-        elif not Config.THRESHOLD_TIMER_MINUTES or not 0 <= Config.THRESHOLD_TIMER_MINUTES <= 120:
+        elif not Config.THRESHOLD_TIMER_MINUTES or not 2 <= Config.THRESHOLD_TIMER_MINUTES <= 10080:
             print(
                 "Error, valid threshold timer value was not provided. Please provide one in the variable \"THRESHOLD_TIMER_MINUTES\", in the Lambda's environment variables, with a number between 0 and 100 (0 means disabled)")
             return generate_return_message(FAILURE_STATUS_CODE, "Missing valid threshold timer")
