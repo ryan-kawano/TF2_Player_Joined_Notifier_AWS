@@ -7,7 +7,8 @@ from utility import (
     convert_minutes_to_seconds,
     generate_return_message,
     handle_error,
-    send_email
+    send_email,
+    format_server_info_to_string
 )
 from constants import (
     SUCCESS_STATUS_CODE,
@@ -52,11 +53,11 @@ def threshold_mode() -> dict:
     print("Extracting target time from the timer file and comparing it to current time")
     with open(f"/tmp/{TIMER_FILE}", mode="r") as timer_file:
         # There should only be one line in the file, the target time
-        target_time = int(timer_file.readline())
-        if not target_time:
+        target_time_sec: int = int(timer_file.readline())
+        if not target_time_sec:
             return handle_error(sns_client, "Timer file was empty")
-        print(f"Comparing time in timer file: {time.ctime(target_time)} to current time: {current_time.current_time_human_readable}. The difference is (target time - current time): {round(abs((target_time - current_time.current_time_seconds_int) / 3600.0), 2)} hours")
-        passed_target_time = current_time.current_time_seconds_int >= target_time
+        print(f"Comparing time in timer file: {time.ctime(target_time_sec)} to current time: {current_time.current_time_human_readable}. The difference is (current time - target time): {round(((current_time.current_time_seconds_int - target_time_sec) / 3600.0), 2)} hours")
+        passed_target_time = current_time.current_time_seconds_int >= target_time_sec
 
     if not passed_target_time:
         print("We haven't passed the target time yet. Don't do anything.")
@@ -109,7 +110,9 @@ def threshold_mode() -> dict:
 
         print("Sending email")
         subject = f"{EMAIL_SUBJECT_PREFIX}Player count has reached the threshold"
-        message = f"Players count is {player_count} in server: {server_name}, IP: {Config.SERVER_IP}. The next check will happen after {new_target_time.current_time_human_readable}\n"
+        message = format_server_info_to_string(server_name=server_name,
+                                               player_count=player_count,
+                                               new_target_time=new_target_time)
         send_email(sns_client,
                    subject=subject,
                    message=message)

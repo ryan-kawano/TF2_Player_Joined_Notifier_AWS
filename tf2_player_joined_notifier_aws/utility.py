@@ -4,7 +4,7 @@ import os
 from botocore.client import BaseClient
 from constants import MINUTES_TO_SECONDS_MULTIPLIER, EMAIL_SUBJECT_PREFIX, FAILURE_STATUS_CODE
 from config import Config
-
+from time_type import TimeType
 
 def get_env_variables(mode) -> int:
     """Retrieves the environment variables.
@@ -140,3 +140,42 @@ def convert_minutes_to_seconds(minutes: int) -> int:
     :rtype: float
     """
     return minutes * MINUTES_TO_SECONDS_MULTIPLIER
+
+
+def format_server_info_to_string(server_name: str, player_count: int = None, player_names: list[str] = None, new_target_time: TimeType = None):
+    """Formats the provided server details into an easy-to-read, formatted string. Used in the body the email notification. Depending on the mode, only
+    certain parameters are required and others can be omitted.
+
+    :param server_name: The name of the server.
+    :type: str
+    :param player_count: The amount of players in the server.
+    :type: int
+    :param player_names: The list of the names of the players in the server. Only applicable in "all" mode.
+    :type: list[str]
+    :param new_target_time: The new target time for the timer. Only applicable in "threshold" mode.
+    :type: TimeType
+    :return: The formatted string.
+    :rtype: str
+    """
+    if Config.MODE == "all":
+        output: str = (
+            f"Player has joined the server\n\n"
+            f"Server name: {server_name}\n"
+            f"IP: {Config.SERVER_IP}\n"
+            f"Player count: {player_count}\n"
+            f"Player names:\n"
+        )
+        for name in player_names:
+            output += "[" + name + "]\n"
+        return output
+    elif Config.MODE == "threshold":
+        output: str = (
+            f"The player count has reached the threshold: {Config.PLAYER_COUNT_THRESHOLD}\n\n"
+            f"Server name: {server_name}\n"
+            f"IP: {Config.SERVER_IP}\n"
+            f"Player count: {player_count}\n\n"
+            f"The next check will happen after {new_target_time.current_time_human_readable}\n"
+        )
+        return output
+    else:
+        return ""

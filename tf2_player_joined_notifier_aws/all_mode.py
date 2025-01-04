@@ -8,7 +8,9 @@ from constants import (
 )
 from sourceserver.sourceserver import SourceServer
 from config import Config
-
+from constants import SUCCESS_STATUS_CODE
+from utility import generate_return_message
+from utility import format_server_info_to_string
 
 def all_mode() -> dict:
     """Executes the application in "all" mode. It will send notifications for all players that join the server. It won't
@@ -50,10 +52,7 @@ def all_mode() -> dict:
     if player_count == 0 and is_db_empty:
         print("There are no players in the server and the database is empty. Don't do anything.")
 
-        return {
-            'statusCode': 200,
-            'body': 'There were no players'
-        }
+        return generate_return_message(SUCCESS_STATUS_CODE, "There were no players")
     # If there are no players, but there are names in the database, we need to clear the database
     elif player_count == 0 and not is_db_empty:
         print("There are no players in the server, but there are names in the database. Clearing database")
@@ -64,10 +63,7 @@ def all_mode() -> dict:
             dynamo_db_client.delete_item(TableName=Config.DYNAMO_DB_TABLE, Key=key)
             print(f"Successfully deleted item \"{name}\" from DB")
 
-        return {
-            'statusCode': 200,
-            'body': 'There were no players. Cleared DB'
-        }
+        return generate_return_message(SUCCESS_STATUS_CODE, "There were no players in the server. Cleared DB")
     # If there are more than 0 players, then process the data
     elif player_count > 0:
         print("There are players in the server")
@@ -102,22 +98,16 @@ def all_mode() -> dict:
                 print(f"Finished updating database with player \"{name}\". Response: {response}")
 
     if not should_notify:
-        return {
-            'statusCode': 200,
-            'body': 'Don\'t need to notify'
-        }
+        return generate_return_message(SUCCESS_STATUS_CODE, "Don\'t need to notify")
 
     subject = f"{EMAIL_SUBJECT_PREFIX}Player has joined the server"
-    message = f"Players have joined the server: {server_name}, IP: {Config.SERVER_IP}\nPlayers: \n"
-    for name in pending_player_names:
-        message += "[" + name + "]\n"
+    message = format_server_info_to_string(server_name=server_name,
+                                           player_count=player_count,
+                                           player_names=pending_player_names)
     sns_client.publish(
         TopicArn=Config.SNS_TOPIC_ARN,
         Subject=subject,
         Message=message
     )
 
-    return {
-        'statusCode': 200,
-        'body': 'Email sent successfully'
-    }
+    return generate_return_message(SUCCESS_STATUS_CODE, "Email sent successfully")
