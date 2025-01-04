@@ -100,6 +100,7 @@ def all_mode() -> dict:
     if not should_notify:
         return generate_return_message(SUCCESS_STATUS_CODE, "Don\'t need to notify")
 
+    print("Sending notification")
     subject = f"{EMAIL_SUBJECT_PREFIX}Player has joined the server"
     message = format_server_info_to_string(server_name=server_name,
                                            player_count=player_count,
@@ -109,5 +110,6 @@ def all_mode() -> dict:
         Subject=subject,
         Message=message
     )
+    print("Sent notification")
 
     return generate_return_message(SUCCESS_STATUS_CODE, "Email sent successfully")
