@@ -15,7 +15,7 @@ from constants import (
 from config import Config
 from all_mode import all_mode
 from threshold_mode import threshold_mode
-Config.MODE = os.environ["MODE"] # Possible values: "threshold" or "all". This value is always required, which is why we always retrieve it here.
+Config.MODE = os.environ["MODE"] # Possible values: "threshold" or "all". This value is always required, which is why we always retrieve it here, at the start.
 
 
 def lambda_handler(event, context):

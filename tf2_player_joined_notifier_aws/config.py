@@ -4,7 +4,7 @@
 class Config:
     """This class is meant to hold various configuration values used by the application.
     """
-    MODE: str = None # Possible values: "threshold" or "all". This value is always required, which is why we always retrieve it here. See README.md for explanation of modes.
+    MODE: str = None # Possible values: "threshold" or "all". See README.md for explanation of modes.
     SERVER_IP: str = None # The IP of the server to query.
     DYNAMO_DB_TABLE: str = None # The name of the DynamoDB table that will hold the player names.
     SNS_TOPIC_ARN: str = None # The ARN of the SNS Topic to send notifications from.
