@@ -1,3 +1,5 @@
+"""File that contains various constants used throughout the program
+"""
 PRIMARY_KEY = "name" # The primary key for the DynamoDB table that holds the player names
 PRIMARY_KEY_TYPE = "S" # S for String
 SUCCESS_STATUS_CODE = 200

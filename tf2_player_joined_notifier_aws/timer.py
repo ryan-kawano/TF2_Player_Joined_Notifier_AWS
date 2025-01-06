@@ -1,5 +1,6 @@
+"""File that holds timer related functions
+"""
 from botocore.client import BaseClient
-
 from constants import TIMER_FILE, EMAIL_SUBJECT_PREFIX
 from constants import FAILURE_STATUS_CODE
 from time_type import TimeType
