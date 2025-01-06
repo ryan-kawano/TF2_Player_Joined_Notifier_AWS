@@ -1,7 +1,4 @@
-""" The main Lambda function. It will first retrieve a list of players on a server. If there are players, it will check
-if notifications were already sent for those players by checking against a database. It will also check if, any players
-that notifications were already sent for, in a previous iteration, disconnected. Then, when appropriate, it will send
-an email notification saying that players have joined the server and a list of names.
+""" File for the main Lambda function. See the README.md file for more information.
 """
 import os
 from utility import (
