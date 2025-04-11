@@ -1,8 +1,8 @@
-"""File for the Config class.
+"""Configuration class.
 """
 
 class Config:
-    """This class is meant to hold various configuration values used by the application.
+    """Holds various configuration values used by the application.
     """
     MODE: str = None # Possible values: "threshold" or "all". See README.md for explanation of modes.
     SERVER_IP: str = None # The IP of the server to query.
