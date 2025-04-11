@@ -1,10 +1,10 @@
-"""File for the TimeType class.
+"""TimeType class.
 """
 import time
 
 
 class TimeType:
-    """This is a class meant to hold various representations of a point in time.
+    """Holds various representations of a point in time.
     """
     def __init__(self):
         """Constructor

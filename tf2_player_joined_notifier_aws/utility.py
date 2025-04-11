@@ -2,11 +2,11 @@
 """
 import os
 from botocore.client import BaseClient
-from constants import MINUTES_TO_SECONDS_MULTIPLIER, EMAIL_SUBJECT_PREFIX, FAILURE_STATUS_CODE
+import constants
 from config import Config
 from time_type import TimeType
 
-def get_env_variables(mode) -> int:
+def get_env_variables(mode: str) -> int:
     """Retrieves the environment variables.
 
     :param mode: The mode of execution that was set in the MODE environment variable.
@@ -14,26 +14,26 @@ def get_env_variables(mode) -> int:
     :return: 0 if successful. 1 if failed.
     :rtype: int
     """
-    if mode == "all":
-        print("Retrieving environment variables for \"all\" mode")
-        Config.SERVER_IP = os.environ["SERVER_IP"]
-        Config.DYNAMO_DB_TABLE = os.environ["DYNAMO_DB_TABLE"]
-        Config.SNS_TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
+    if mode == constants.Modes.ALL:
+        print(f"Retrieving environment variables for \"{constants.Modes.ALL}\" mode")
+        Config.SERVER_IP = os.environ[constants.Environment.SERVER_IP]
+        Config.DYNAMO_DB_TABLE = os.environ[constants.Environment.DYNAMO_DB_TABLE]
+        Config.SNS_TOPIC_ARN = os.environ[constants.Environment.SNS_TOPIC_ARN]
         return 0
-    elif mode == "threshold":
-        print("Retrieving environment variables for threshold mode")
-        Config.SERVER_IP = os.environ["SERVER_IP"]
-        Config.SNS_TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
-        Config.PLAYER_COUNT_THRESHOLD = int(os.environ["PLAYER_COUNT_THRESHOLD"])
-        Config.THRESHOLD_TIMER_MINUTES = int(os.environ["THRESHOLD_TIMER_MINUTES"])
-        Config.S3_BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
+    elif mode == constants.Modes.THRESHOLD:
+        print(f"Retrieving environment variables for \"{constants.Modes.THRESHOLD}\" mode")
+        Config.SERVER_IP = os.environ[constants.Environment.SERVER_IP]
+        Config.SNS_TOPIC_ARN = os.environ[constants.Environment.SNS_TOPIC_ARN]
+        Config.PLAYER_COUNT_THRESHOLD = int(os.environ[constants.Environment.PLAYER_COUNT_THRESHOLD])
+        Config.THRESHOLD_TIMER_MINUTES = int(os.environ[constants.Environment.THRESHOLD_TIMER_MINUTES])
+        Config.S3_BUCKET_NAME = os.environ[constants.Environment.S3_BUCKET_NAME]
         return 0
     else:
         print("Invalid mode provided.")
         return -1
 
 
-def verify_env_variables(mode) -> dict | None:
+def verify_env_variables(mode: str) -> dict | None:
     """Verifies environment variables by checking that they are present. For certain variables, it will also check
     whether they are within a valid range.
 
@@ -42,46 +42,74 @@ def verify_env_variables(mode) -> dict | None:
     :return: `None` if environment variables were valid. An error message if they weren't valid.
     :rtype: None, dict
     """
-    if mode == "all":
+    if mode == constants.Modes.ALL:
         if not Config.SERVER_IP:
-            print("Error, server ip was not provided. Please provide one in the variable \"SERVER_IP\", in the Lambda's environment variables")
-            return generate_return_message(FAILURE_STATUS_CODE, "Missing server ip")
+            print(
+                f"Error, server ip was not provided. Please provide one in the Lambda environment variable "
+                f"\"{constants.Environment.SERVER_IP}\""
+            )
+            return generate_return_message(constants.StatusCodes.FAILURE, "Missing server ip")
         elif not Config.DYNAMO_DB_TABLE:
-            print("Error, DynamoDb table name was not provided. Please provide one in the variable \"DYNAMO_DB_TABLE\", in the Lambda's environment variables")
-            return generate_return_message(FAILURE_STATUS_CODE, "Missing DynamoDb table name")
+            print(
+                f"Error, DynamoDB table name was not provided. Please provide one in the Lambda environment variable "
+                f"\"{constants.Environment.DYNAMO_DB_TABLE}\""
+            )
+            return generate_return_message(constants.StatusCodes.FAILURE, "Missing DynamoDB table name")
         elif not Config.SNS_TOPIC_ARN:
-            print("Error, SNS topic ARN was not provided. Please provide one in the variable \"SNS_TOPIC_ARN\", in the Lambda's environment variables")
-            return generate_return_message(FAILURE_STATUS_CODE, "Missing SNS ARN")
+            print(
+                f"Error, SNS topic ARN was not provided. Please provide one in the Lambda environment variable "
+                f"\"{constants.Environment.SNS_TOPIC_ARN}\""
+            )
+            return generate_return_message(constants.StatusCodes.FAILURE, "Missing SNS ARN")
         else:
             return None
-    elif mode == "threshold":
+    elif mode == constants.Modes.THRESHOLD:
         if not Config.SERVER_IP:
             print(
-                "Error, server ip was not provided. Please provide one in the variable \"SERVER_IP\", in the Lambda's environment variables")
-            return generate_return_message(FAILURE_STATUS_CODE, "Missing server ip")
+                f"Error, server ip was not provided. Please provide one in the Lambda environment variable "
+                f"\"{constants.Environment.SERVER_IP}\""
+            )
+            return generate_return_message(constants.StatusCodes.FAILURE, "Missing server ip")
         elif not Config.SNS_TOPIC_ARN:
             print(
-                "Error, SNS topic ARN was not provided. Please provide one in the variable \"SNS_TOPIC_ARN\", in the Lambda's environment variables")
-            return generate_return_message(FAILURE_STATUS_CODE, "Missing SNS ARN")
-        elif not Config.PLAYER_COUNT_THRESHOLD or not 0 <= Config.PLAYER_COUNT_THRESHOLD <= 100:
+                f"Error, SNS topic ARN was not provided. Please provide one in the Lambda environment variable "
+                f"\"{constants.Environment.SNS_TOPIC_ARN}\""
+            )
+            return generate_return_message(constants.StatusCodes.FAILURE, "Missing SNS Topic ARN")
+        elif (
+                not Config.PLAYER_COUNT_THRESHOLD
+                or not constants.Environment.MIN_THRESHOLD <= Config.PLAYER_COUNT_THRESHOLD <= constants.Environment.MAX_THRESHOLD
+        ):
             print(
-                "Error, valid player count threshold was not provided. Please provide one in the variable \"PLAYER_COUNT_THRESHOLD\", in the Lambda's environment variables, with a number between 0 and 100 (0 means disabled)")
-            return generate_return_message(FAILURE_STATUS_CODE, "Missing player count threshold")
-        elif not Config.THRESHOLD_TIMER_MINUTES or not 2 <= Config.THRESHOLD_TIMER_MINUTES <= 10080:
+                f"Error, valid player count threshold was not provided. Please provide one in the Lambda environment "
+                f"variable \"{constants.Environment.PLAYER_COUNT_THRESHOLD}\" with a "
+                f"number between {constants.Environment.MIN_THRESHOLD} and {constants.Environment.MAX_THRESHOLD} "
+                f"({constants.Environment.MIN_THRESHOLD} meaning disabled)"
+            )
+            return generate_return_message(constants.StatusCodes.FAILURE, "Missing player count threshold")
+        elif (
+                not Config.THRESHOLD_TIMER_MINUTES
+                or not constants.Environment.MIN_TIMER_MINUTES <= Config.THRESHOLD_TIMER_MINUTES <= constants.Environment.MAX_TIMER_MINUTES
+        ):
             print(
-                "Error, valid threshold timer value was not provided. Please provide one in the variable \"THRESHOLD_TIMER_MINUTES\", in the Lambda's environment variables, with a number between 0 and 100 (0 means disabled)")
-            return generate_return_message(FAILURE_STATUS_CODE, "Missing valid threshold timer")
+                f"Error, valid threshold timer value was not provided. Please provide one in the Lambda environment "
+                f"variable \"{constants.Environment.THRESHOLD_TIMER_MINUTES}\" with a "
+                f"number between {constants.Environment.MIN_TIMER_MINUTES} and {constants.Environment.MAX_TIMER_MINUTES} "
+                f"({constants.Environment.MIN_THRESHOLD} meaning disabled)")
+            return generate_return_message(constants.StatusCodes.FAILURE, "Missing valid threshold timer")
         elif not Config.S3_BUCKET_NAME:
             print(
-                "Error, S3 bucket name was not provided. Please provide one in the variable \"S3_BUCKET_NAME\", in the Lambda's environment variables")
-            return generate_return_message(FAILURE_STATUS_CODE, "Missing S3 bucket name")
+                f"Error, S3 bucket name was not provided. Please provide one in the Lambda environment variable "
+                f"\"{constants.Environment.S3_BUCKET_NAME}\""
+            )
+            return generate_return_message(constants.StatusCodes.FAILURE, "Missing S3 bucket name")
         else:
             return None
     else:
-        return generate_return_message(FAILURE_STATUS_CODE, "No mode passed in to verify_env_variables")
+        return generate_return_message(constants.StatusCodes.FAILURE, "No mode passed in to verify_env_variables")
 
 
-def handle_error(sns_client, error_message) -> dict:
+def handle_error(sns_client: BaseClient, error_message: str) -> dict:
     """Handles errors by sending an email of the error and generating an error return-message.
 
     :param sns_client: The SNS client to send emails with.
@@ -92,13 +120,15 @@ def handle_error(sns_client, error_message) -> dict:
     :rtype: dict
     """
     print(error_message)
-    send_email(sns_client,
-               subject=f"{EMAIL_SUBJECT_PREFIX}TF2 Update Notifier had an error",
-               message=error_message)
+    send_email(
+        sns_client,
+        subject=f"{constants.Misc.EMAIL_SUBJECT_PREFIX}{constants.Misc.PROJECT_NAME} had an error",
+        message=error_message
+    )
     return generate_return_message(300, error_message)
 
 
-def send_email(sns_client, subject: str, message: str) -> None:
+def send_email(sns_client: BaseClient, subject: str, message: str) -> None:
     """Sends an email using the SNS client with the provided subject and message.
 
     :param sns_client: The SNS client to send emails with.
@@ -139,7 +169,7 @@ def convert_minutes_to_seconds(minutes: int) -> int:
     :return: The time converted to seconds.
     :rtype: float
     """
-    return minutes * MINUTES_TO_SECONDS_MULTIPLIER
+    return minutes * constants.Misc.MINUTES_TO_SECONDS_MULTIPLIER
 
 
 def format_server_info_to_string(server_name: str, player_count: int = None, player_names: list[str] = None, new_target_time: TimeType = None):
@@ -157,8 +187,8 @@ def format_server_info_to_string(server_name: str, player_count: int = None, pla
     :return: The formatted string.
     :rtype: str
     """
-    if Config.MODE == "all":
-        output: str = (
+    if Config.MODE == constants.Modes.ALL:
+        output = (
             f"Player has joined the server\n\n"
             f"Server name: {server_name}\n"
             f"IP: {Config.SERVER_IP}\n"
@@ -168,8 +198,8 @@ def format_server_info_to_string(server_name: str, player_count: int = None, pla
         for name in player_names:
             output += "[" + name + "]\n"
         return output
-    elif Config.MODE == "threshold":
-        output: str = (
+    elif Config.MODE == constants.Modes.THRESHOLD:
+        output = (
             f"The player count has reached the threshold: {Config.PLAYER_COUNT_THRESHOLD}\n\n"
             f"Server name: {server_name}\n"
             f"IP: {Config.SERVER_IP}\n"
