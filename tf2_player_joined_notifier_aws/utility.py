@@ -1,10 +1,13 @@
 """Holds various utility functions.
 """
 import os
+
 from botocore.client import BaseClient
+
 import constants
 from config import Config
 from time_type import TimeType
+
 
 def get_env_variables(mode: str) -> int:
     """Retrieves the environment variables.
