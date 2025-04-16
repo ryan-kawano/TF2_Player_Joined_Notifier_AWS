@@ -1,6 +1,7 @@
 """The main AWS Lambda function. See the README.md file for more information.
 """
 import os
+
 from utility import (
     generate_return_message,
     get_env_variables,
@@ -10,6 +11,7 @@ import constants
 from config import Config
 from all_mode import all_mode
 from threshold_mode import threshold_mode
+
 Config.MODE = os.environ["MODE"] # This value is always required, which is why it's retrieved here at the start.
 
 

@@ -1,6 +1,7 @@
 """Timer related functions
 """
 from botocore.client import BaseClient
+
 import constants
 from time_type import TimeType
 from config import Config

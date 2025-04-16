@@ -1,9 +1,11 @@
 """Threshold mode of operation.
 """
 import time
+
 import boto3
 import botocore.client
 from sourceserver.sourceserver import SourceServer
+
 from utility import (
     convert_minutes_to_seconds,
     generate_return_message,
