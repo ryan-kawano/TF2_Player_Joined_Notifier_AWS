@@ -183,7 +183,7 @@ def format_server_info_to_string(server_name: str, player_count: int = None, pla
     :type: str
     :param player_count: The amount of players in the server.
     :type: int
-    :param player_names: The list of the names of the players in the server. Only applicable in "all" mode.
+    :param player_names: The list of the names of the players in the server.
     :type: list[str]
     :param new_target_time: The new target time for the timer. Only applicable in "threshold" mode.
     :type: TimeType
@@ -191,24 +191,28 @@ def format_server_info_to_string(server_name: str, player_count: int = None, pla
     :rtype: str
     """
     if Config.MODE == constants.Modes.ALL:
-        output = (
+        player_names_formatted = ""
+        for idx, name in enumerate(player_names):
+            player_names_formatted += f"{idx + 1}: {name}\n"
+
+        return (
             f"Player has joined the server\n\n"
             f"Server name: {server_name}\n"
             f"IP: {Config.SERVER_IP}\n"
-            f"Player count: {player_count}\n"
-            f"Player names:\n"
-        )
-        for name in player_names:
-            output += "[" + name + "]\n"
-        return output
+            f"Player count: {player_count}\n\n"
+            f"Player names:\n{player_names_formatted}")
     elif Config.MODE == constants.Modes.THRESHOLD:
-        output = (
+        player_names_formatted = ""
+        for idx, name in enumerate(player_names):
+            player_names_formatted += f"{idx + 1}: {name}\n"
+
+        return (
             f"The player count has reached the threshold: {Config.PLAYER_COUNT_THRESHOLD}\n\n"
             f"Server name: {server_name}\n"
             f"IP: {Config.SERVER_IP}\n"
             f"Player count: {player_count}\n\n"
+            f"Player names:\n{player_names_formatted}\n\n"
             f"The next check will happen after {new_target_time.current_time_human_readable}\n"
         )
-        return output
     else:
         return ""

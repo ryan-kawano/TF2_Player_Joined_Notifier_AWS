@@ -112,6 +112,7 @@ def threshold_mode() -> dict:
         message = format_server_info_to_string(
             server_name=server_name,
             player_count=player_count,
+            player_names=current_player_names,
             new_target_time=new_target_time
         )
         send_email(
