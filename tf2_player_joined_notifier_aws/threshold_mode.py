@@ -33,7 +33,6 @@ def threshold_mode() -> dict:
     s3_client = boto3.client(constants.Boto.S3)
 
     print("Checking if timer has finished i.e. the target time has passed")
-    print("Getting current time")
     current_time = TimeType()
     print(f"Current time is {current_time.current_time_human_readable}")
 

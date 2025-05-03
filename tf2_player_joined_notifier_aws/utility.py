@@ -98,7 +98,7 @@ def verify_env_variables(mode: str) -> dict | None:
                 f"Error, valid threshold timer value was not provided. Please provide one in the Lambda environment "
                 f"variable \"{constants.Environment.THRESHOLD_TIMER_MINUTES}\" with a "
                 f"number between {constants.Environment.MIN_TIMER_MINUTES} and {constants.Environment.MAX_TIMER_MINUTES} "
-                f"({constants.Environment.MIN_THRESHOLD} meaning disabled)")
+            )
             return generate_return_message(constants.StatusCodes.FAILURE, "Missing valid threshold timer")
         elif not Config.S3_BUCKET_NAME:
             print(
