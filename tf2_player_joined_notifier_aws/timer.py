@@ -15,7 +15,6 @@ def handle_timer_file_not_found(s3_client: BaseClient, sns_client: BaseClient, c
     print("Timer file not found on S3. Creating a new one")
     with open(f"/tmp/{constants.Misc.TIMER_FILE}", "w") as timer_file:
         new_target_time = TimeType()
-        new_target_time.set_time(current_time.current_time_seconds_float + float(convert_minutes_to_seconds(Config.THRESHOLD_TIMER_MINUTES)))
         timer_file.write(str(new_target_time.current_time_seconds_int))
     print(f"Created a new timer file with time {new_target_time.current_time_human_readable}. Uploading it")
     try:
