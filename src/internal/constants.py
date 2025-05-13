@@ -5,6 +5,14 @@ class Modes:
     THRESHOLD = "threshold"
     ALL = "all"
 
+    @classmethod
+    def possible_modes(cls) -> str:
+        possible_modes = ""
+        for mode in vars(cls).items():
+            possible_modes += f"{mode}\n"
+
+        return possible_modes
+
 class Boto:
     SNS = "sns"
     DYNAMO_DB = "dynamodb"

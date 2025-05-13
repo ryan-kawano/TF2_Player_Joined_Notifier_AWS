@@ -1,18 +1,12 @@
 """The main AWS Lambda function. See the README.md file for more information.
 """
-import os
-
 from src.internal.utility import (
     generate_return_message,
-    get_env_variables,
-    verify_env_variables
 )
 from src.internal import constants
 from src.internal.config import Config
 from src.modes.all_mode import all_mode
 from src.modes.threshold_mode import threshold_mode
-
-Config.MODE = os.environ["MODE"] # This value is always required, which is why it's retrieved here at the start.
 
 
 def lambda_handler(event, context):
@@ -20,22 +14,11 @@ def lambda_handler(event, context):
     """
     print("Entered lambda_handler")
 
-    if Config.MODE != constants.Modes.ALL and Config.MODE != constants.Modes.THRESHOLD:
-        print(
-            f"Error, the mode \"{Config.MODE}\" is invalid. Please provide one in the variable \"MODE\" in "
-            f"AWS Lambda's environment variables. The possible values are: \"{constants.Modes.ALL}\" and "
-            f"\"{constants.Modes.THRESHOLD}\""
-        )
-        return generate_return_message(constants.StatusCodes.FAILURE, "Invalid mode")
-
-    if get_env_variables(Config.MODE) != 0:
+    if Config.get_env_variables() != 0:
         print("Error when retrieving environment variables.")
         return generate_return_message(constants.StatusCodes.FAILURE, "Error when retrieving environment variables")
 
-    verify_status_result = verify_env_variables(Config.MODE)
-    if verify_status_result is not None:
-        print("Error when verifying environment variables.")
-        return verify_status_result
+    Config.verify_env_variables()
 
     if Config.MODE == constants.Modes.ALL:
         return all_mode()
