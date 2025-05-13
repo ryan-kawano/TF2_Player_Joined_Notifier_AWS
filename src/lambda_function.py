@@ -2,15 +2,15 @@
 """
 import os
 
-from utility import (
+from src.internal.utility import (
     generate_return_message,
     get_env_variables,
     verify_env_variables
 )
-import constants
-from config import Config
-from all_mode import all_mode
-from threshold_mode import threshold_mode
+from src.internal import constants
+from src.internal.config import Config
+from src.modes.all_mode import all_mode
+from src.modes.threshold_mode import threshold_mode
 
 Config.MODE = os.environ["MODE"] # This value is always required, which is why it's retrieved here at the start.
 

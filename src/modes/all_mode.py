@@ -3,9 +3,9 @@
 import boto3
 from sourceserver.sourceserver import SourceServer
 
-import constants
-from config import Config
-from utility import (
+from ..internal import constants
+from ..internal.config import Config
+from ..internal.utility import (
     generate_return_message,
     format_server_info_to_string
 )
