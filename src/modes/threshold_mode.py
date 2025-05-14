@@ -20,8 +20,7 @@ from ..internal.time_type import TimeType
 
 
 def threshold_mode() -> dict:
-    """This mode will retrieve the player count from the server and will only send a notification if the player count is
-    greater than or equal to the threshold.
+    """Executes the application in "THRESHOLD" mode. See the README for an explanation of this mode.
 
     :return: A status message of the result.
     :rtype: dict

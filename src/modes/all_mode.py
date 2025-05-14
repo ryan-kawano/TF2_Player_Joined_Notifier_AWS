@@ -12,8 +12,7 @@ from ..internal.utility import (
 
 
 def all_mode() -> dict:
-    """Executes the application in "all" mode. It will send notifications for all players that join the server. It won't
-    send repeat notifications for the same player unless they disconnect and join the server again, shortly after.
+    """Executes the application in "ALL" mode. See the README for an explanation of this mode.
 
     :return: A status message of the result.
     :rtype: dict

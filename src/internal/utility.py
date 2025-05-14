@@ -45,7 +45,7 @@ def send_email(sns_client: BaseClient, subject: str, message: str) -> None:
 
 
 def generate_return_message(status_code: int, status_body: str) -> dict:
-    """Generates a status message in order to return it from the main lambda function.
+    """Generates a status message.
 
     :param status_code: The numerical status code.
     :type status_code: int
@@ -72,17 +72,17 @@ def convert_minutes_to_seconds(minutes: int) -> int:
 
 
 def format_server_info_to_string(server_name: str, player_count: int = None, player_names: list[str] = None, new_target_time: TimeType = None):
-    """Formats the provided server details into an easy-to-read, formatted string. Used in the body the email notification. Depending on the mode, only
+    """Formats the provided server details into a human-readable, formatted string. Depending on the mode, only
     certain parameters are required and others can be omitted.
 
     :param server_name: The name of the server.
     :type: str
     :param player_count: The amount of players in the server.
-    :type: int
+    :type: int or None
     :param player_names: The list of the names of the players in the server.
-    :type: list[str]
+    :type: list[str] or None
     :param new_target_time: The new target time for the timer. Only applicable in "threshold" mode.
-    :type: TimeType
+    :type: TimeType or None
     :return: The formatted string.
     :rtype: str
     """

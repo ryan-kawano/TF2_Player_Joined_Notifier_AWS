@@ -7,6 +7,7 @@ class Modes:
 
     @classmethod
     def possible_modes(cls) -> str:
+        """Returns a new-line separated list of modes."""
         possible_modes = ""
         for mode in vars(cls).items():
             possible_modes += f"{mode}\n"
@@ -20,7 +21,7 @@ class Boto:
 
 class DynamoDB:
     PRIMARY_KEY = "name" # The primary key for the DynamoDB table that holds the player names
-    PRIMARY_KEY_TYPE = "S" # S for String
+    PRIMARY_KEY_TYPE = "S" # S as in String
 
 class Environment:
     SERVER_IP = "SERVER_IP"
@@ -28,7 +29,7 @@ class Environment:
     SNS_TOPIC_ARN = "SNS_TOPIC_ARN"
     PLAYER_COUNT_THRESHOLD = "PLAYER_COUNT_THRESHOLD"
     MIN_THRESHOLD = 0
-    MAX_THRESHOLD = 100
+    MAX_THRESHOLD = 100 # TF2 max player count is currently 100
     THRESHOLD_TIMER_MINUTES = "THRESHOLD_TIMER_MINUTES"
     MIN_TIMER_MINUTES = 2
     MAX_TIMER_MINUTES = 10080
