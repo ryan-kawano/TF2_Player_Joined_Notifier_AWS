@@ -5,7 +5,7 @@ from botocore.client import BaseClient
 from . import constants
 from .time_type import TimeType
 from .config import Config
-from .utility import convert_minutes_to_seconds, handle_error, send_email, generate_return_message
+from .utility import handle_error, send_email, generate_return_message
 
 
 def handle_timer_file_not_found(s3_client: BaseClient, sns_client: BaseClient, current_time: TimeType) -> dict:

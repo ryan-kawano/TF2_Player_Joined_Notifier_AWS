@@ -6,8 +6,7 @@ from . import constants
 
 
 class Config:
-    """Holds various configuration values used by the application.
-    """
+    """Represents the current configuration based on settings provided by the user."""
     MODE: str = None # Possible values: "threshold" or "all". See README.md for explanation of modes.
     SERVER_IP: str = None # The IP of the server to query.
     DYNAMO_DB_TABLE: str = None # The name of the DynamoDB table that will hold the player names.
@@ -17,7 +16,19 @@ class Config:
     S3_BUCKET_NAME: str = None  # Name of the bucket that will hold the timer's target time.
 
     class RequiredValue:
+        """Represents a required config value."""
         def __init__(self, name: str, data_type: type, min_value: int = None, max_value: int = None):
+            """Constructor.
+
+            :param name: The name of the key. It should be an exact match to the attributes defined in Config.
+            :type name: str
+            :param data_type: The type that the value associated with the key should be. NOT the type of the key.
+            :type data_type: type
+            :param min_value: The minimum value that the value can be. If "None", then no checks will happen.
+            :type min_value: int or None
+            :param max_value: The maximum value that the value can be. If "None", then no checks will happen.
+            :type max_value: int or None
+            """
             self.name: str = name
             self.data_type: type = data_type
             self.min_value: int = min_value
@@ -50,7 +61,7 @@ class Config:
     def get_env_variables(cls) -> int:
         """Retrieves the environment variables.
 
-        :return: 0 if successful. -1 if failed.
+        :return: 0 if successful. Otherwise, it will throw an exception.
         :rtype: int
         """
         cls.MODE = os.environ["MODE"]
@@ -85,7 +96,7 @@ class Config:
         """Verifies environment variables by checking that they are present. For certain variables, it will also check
         whether they are within a valid range.
 
-        :return: `None` if environment variables were valid, otherwise returns an error message.
+        :return: `None` if environment variables were valid, otherwise it will raise an exception.
         :rtype: None, dict
         """
         if cls.MODE not in vars(constants.Modes).values():
