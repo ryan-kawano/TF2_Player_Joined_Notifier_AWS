@@ -2,8 +2,8 @@
 """
 from botocore.client import BaseClient
 
-from . import constants
-from .time_type import TimeType
+from internal import constants
+from internal.time_type import TimeType
 
 
 def handle_error(sns_client: BaseClient, error_message: str) -> dict:

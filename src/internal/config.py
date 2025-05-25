@@ -2,7 +2,7 @@
 """
 import os
 
-from . import constants
+from internal import constants
 
 
 class Config:

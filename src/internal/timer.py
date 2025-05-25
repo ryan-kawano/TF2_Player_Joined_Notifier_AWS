@@ -2,10 +2,10 @@
 """
 from botocore.client import BaseClient
 
-from . import constants
-from .time_type import TimeType
-from .config import Config
-from .utility import handle_error, send_email, generate_return_message
+from internal import constants
+from internal.time_type import TimeType
+from internal.config import Config
+from internal.utility import handle_error, send_email, generate_return_message
 
 
 def handle_timer_file_not_found(s3_client: BaseClient, sns_client: BaseClient, current_time: TimeType) -> dict:
