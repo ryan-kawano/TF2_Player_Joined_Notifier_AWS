@@ -1,0 +1,62 @@
+# Template to deploy the application to AWS.
+# Find all the lines labelled "FILL IN" and fill them in with the required values.
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 7
+
+Resources:
+  EmailService:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: "TF2 Player Joined Notifier"
+  EmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: "example@example.com" # FILL IN - Put your email address here
+      Protocol: "email"
+      TopicArn: !GetAtt EmailService.TopicArn
+  TimerFile:
+    Type: AWS::S3::Bucket
+  PlayerNamesTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: "name"
+        Type: "String"
+  TF2PlayerJoinedNotifierFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.13
+      Policies:
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt EmailService.TopicName
+        - S3FullAccessPolicy:
+            BucketName: !Ref TimerFile
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlayerNamesTable
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          # FILL IN - Fill in the variables labelled "FILL IN" below. The others can be changed or left as they are, except where noted.
+          DYNAMO_DB_TABLE: !Ref PlayerNamesTable # DON'T CHANGE
+          MODE: "threshold"
+          PLAYER_COUNT_THRESHOLD: "10"
+          S3_BUCKET_NAME: !Ref TimerFile # DON'T CHANGE
+          SERVER_IP: "" # FILL IN - The IP address and PORT of the server you want notifications for, e.g., 127.0.0.1:27015
+          SNS_TOPIC_ARN: !GetAtt EmailService.TopicArn # DON'T CHANGE
+          THRESHOLD_TIMER_MINUTES: "60"
+      Events:
+        EventBridgeTimer:
+          Type: ScheduleV2
+          Properties:
+            Description: "The timer that runs the main Lambda function"
+            Name: "tf2_player_joined_notifier_timer"
+            ScheduleExpression: rate(1 minute)
+            State: ENABLED

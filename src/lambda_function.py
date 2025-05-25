@@ -1,12 +1,12 @@
 """The main AWS Lambda function. See the README.md file for more information.
 """
-from src.internal.utility import (
+from internal.utility import (
     generate_return_message,
 )
-from src.internal import constants
-from src.internal.config import Config
-from src.modes.all_mode import all_mode
-from src.modes.threshold_mode import threshold_mode
+from internal import constants
+from internal.config import Config
+from modes.all_mode import all_mode
+from modes.threshold_mode import threshold_mode
 
 
 def lambda_handler(event, context):

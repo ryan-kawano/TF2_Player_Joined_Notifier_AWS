@@ -6,17 +6,17 @@ import boto3
 import botocore.client
 from sourceserver.sourceserver import SourceServer
 
-from ..internal.utility import (
+from internal.utility import (
     convert_minutes_to_seconds,
     generate_return_message,
     handle_error,
     send_email,
     format_server_info_to_string
 )
-from ..internal import constants
-from ..internal.timer import handle_timer_file_not_found
-from ..internal.config import Config
-from ..internal.time_type import TimeType
+from internal import constants
+from internal.timer import handle_timer_file_not_found
+from internal.config import Config
+from internal.time_type import TimeType
 
 
 def threshold_mode() -> dict:
